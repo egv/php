@@ -12,12 +12,12 @@
 Присваиваем ему value. Выполянем body как progn, на выходе 
 вычисляем place-form и записываем value, которое мы запомнили"
   (cl-utilities::with-gensyms 
-   (saved-value)
-   `(let1 ,saved-value ,place-form
-      (setf ,place-form ,value)
-      (unwind-protect
-          (progn ,@body)
-        (setf ,place-form ,saved-value)))))
+      (saved-value)
+    `(let1 ,saved-value ,place-form
+       (setf ,place-form ,value)
+       (unwind-protect
+            (progn ,@body)
+         (setf ,place-form ,saved-value)))))
 
 ;;; readtable-related macros
 (defparameter *good-readtable* (copy-readtable nil) "Sample initial readtable for tests")
@@ -29,11 +29,13 @@
 
 (defmacro with-my-readtable (&body body) 
   "evaluates body with readtable set to *my-readtable*"
-  `(with-readtable *my-readtable* ,@body))
+  `(let1 *readtable* *my-readtable* ,@body))
+;;(with-readtable *my-readtable* ,@body))
 
 (defmacro with-good-readtable (&body body) 
   "evaluates body with readtable set to *good readtable*"
-  `(with-readtable *good-readtable* ,@body))
+  `(let1 *readtable* *good-readtable* ,@body))
+;;  `(with-readtable *good-readtable* ,@body))
 
 (defpackage :foo-package (:use)) 
 
